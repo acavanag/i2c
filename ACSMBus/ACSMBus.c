@@ -16,12 +16,27 @@
 
 #define I2C_SLAVE 0x0703
 
+/* Uncomment this line to enable printing. */
+//#define PRINT
+
+#ifdef PRINT
+#define _PRINT(prefix, buf, len)\
+  uint8_t *_buf = (uint8_t *)buf;\
+  printf("%s: ", prefix);\
+  for (int i = 0; i < len; ++i) {\
+    printf("%02x", _buf[i]);\
+  }\
+  printf("\n");
+#else
+#define _PRINT(prefix, buf, len)
+#endif
+
 static int ac_smbus_select(int fd, uint8_t dev)
 {
   return ioctl(fd, I2C_SLAVE, dev & 0x7F);
 }
 
-int ac_sumbus_open(const char *device)
+int ac_smbus_open(const char *device)
 {
   return open(device, O_RDWR);
 }
@@ -37,7 +52,9 @@ int ac_smbus_read(int fd, uint8_t dev, void *buf, size_t len)
     return -1;
   }
 
-  return (int)read(fd, buf, len);
+  int r = (int)read(fd, buf, len);
+  _PRINT("R", buf, len)
+  return r;
 }
 
 int ac_smbus_write(int fd, uint8_t dev, void *buf, size_t len)
@@ -46,6 +63,7 @@ int ac_smbus_write(int fd, uint8_t dev, void *buf, size_t len)
     return -1;
   }
 
+  _PRINT("W", buf, len)
   return (int)write(fd, buf, len);
 }
 

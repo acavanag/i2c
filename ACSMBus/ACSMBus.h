@@ -10,13 +10,14 @@
 #define ACSMBus_h
 
 #include <stdio.h>
+#include <stdint.h>
 
 #define AC_SMBUS_DEFAULT_DEVICE "/dev/i2c-1"
 
 /*
  Opens the specified I2C device file.
  */
-int ac_sumbus_open(const char *device);
+int ac_smbus_open(const char *device);
 
 /*
  Closes the given I2C device file.
